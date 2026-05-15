@@ -2,18 +2,32 @@ import { createAgent } from "langchain";
 import { ChatGroq } from "@langchain/groq";
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 
+// const client = new MultiServerMCPClient({
+//   math: {
+//     transport: "stdio",
+//     command: "node",
+//     args: ["./app/lib/tools/mathServerTool.js"],
+//   },
+//   // weather: {
+//   //   transport: "sse",
+//   //   url: "http://localhost:8000/mcp",
+//   // },
+// });
 const client = new MultiServerMCPClient({
   math: {
     transport: "stdio",
     command: "node",
     args: ["./app/lib/tools/mathServerTool.js"],
   },
-  // weather: {
-  //   transport: "sse",
-  //   url: "http://localhost:8000/mcp",
-  // },
+  userDb: {                                          // ← add this
+    transport: "stdio",
+    command: "node",
+    args: ["./app/lib/tools/userDbServer.js"],       // ← path to new file
+    env: {
+      MONGODB_URI: process.env.MONGODB_URI!,         // ← pass the env variable
+    },
+  },
 });
-
 
 const llm = new ChatGroq({
   model: "llama-3.3-70b-versatile",

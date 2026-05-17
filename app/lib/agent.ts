@@ -3,38 +3,42 @@ import { ChatGroq } from "@langchain/groq";
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 import { MemorySaver } from "@langchain/langgraph";
 
+// const client = new MultiServerMCPClient({
+//   // math: {
+//   //   transport: "stdio",
+//   //   command: "node",
+//   //   args: ["./app/lib/tools/mathServerTool.js"],
+//   // },
+//   // weather: {
+//   //   transport: "sse",
+//   //   url: "http://localhost:8000/mcp",
+//   // },
+// });
 const client = new MultiServerMCPClient({
   // math: {
   //   transport: "stdio",
   //   command: "node",
   //   args: ["./app/lib/tools/mathServerTool.js"],
   // },
-  weather: {
+  // userDb: {
+  //   // ← add this
+  //   transport: "stdio",
+  //   command: "node",
+  //   args: ["./app/lib/tools/userDbServer.js"], // ← path to new file
+  //   env: {
+  //     MONGODB_URI: process.env.MONGODB_URI!, // ← pass the env variable
+  //   },
+  // },
+  userdb: {
     transport: "sse",
-    url: "http://localhost:8000/mcp",
+    url: "https://mcptools-production-ed02.up.railway.app/mcp",
   },
 });
-// const client = new MultiServerMCPClient({
-//   math: {
-//     transport: "stdio",
-//     command: "node",
-//     args: ["./app/lib/tools/mathServerTool.js"],
-//   },
-//   userDb: {
-//     // ← add this
-//     transport: "stdio",
-//     command: "node",
-//     args: ["./app/lib/tools/userDbServer.js"], // ← path to new file
-//     env: {
-//       MONGODB_URI: process.env.MONGODB_URI!, // ← pass the env variable
-//     },
-//   },
-// });
 
 const llm = new ChatGroq({
   model: "llama-3.3-70b-versatile",
 });
-const memory = new MemorySaver()
+const memory = new MemorySaver();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cachedAgent: any = null; // ← cache here
@@ -47,7 +51,7 @@ export const agent = async () => {
   cachedAgent = createAgent({
     model: llm,
     tools: tools,
-    checkpointer:memory,
+    checkpointer: memory,
     systemPrompt:
       "You are a friendly AI assistant. For greetings and casual conversation, respond naturally. For any factual questions or tasks (math, weather, database operations, etc.), always use the available tools and mention the tool name used. If tools were called but returned no answer, say 'I don't know'. If a task required tools but none were called, say 'tools are not called'. Never answer factual questions from your own knowledge — use tools instead.",
   });

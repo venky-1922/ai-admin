@@ -31,12 +31,12 @@ const client = new MultiServerMCPClient({
   // },
   userdb: {
     transport: "sse",
-    url: "https://mcp-tools-mu.vercel.app",
+    url: "https://mcp-tools-l8yj.onrender.com/mcp",
   },
 });
 
 const llm = new ChatGroq({
-  model: "llama-3.3-70b-versatile",
+  model: "openai/gpt-oss-120b",
 });
 const memory = new MemorySaver();
 

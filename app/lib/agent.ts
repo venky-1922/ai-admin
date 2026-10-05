@@ -31,7 +31,7 @@ const client = new MultiServerMCPClient({
   // },
   userdb: {
     transport: "sse",
-    url: "https://mcptools-production-ed02.up.railway.app/mcp",
+    url: "https://mcp-tools-mu.vercel.app",
   },
 });
 
